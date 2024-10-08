@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>
+            Changing background color
+        </title>
+        <script type="text/javascript">
+            function a()
+            {
+                document.bgColor="red"
+                window.setTimeout("b()", 1000)
+            }
+            function b()
+            {
+                document.bgColor="blue"
+                window.setTimeout("c()", 1000)
+            }
+            function c()
+            {
+                document.bgColor="green"
+                window.setTimeout("d()", 1000)
+            }
+            function d()
+            {
+                document.bgColor="orange"
+                window.setTimeout("e()", 1000)
+            }
+            function e()
+            {
+                document.bgColor="yellow"
+                window.setTimeout("f()", 1000)
+            }
+            function f()
+            {
+                document.bgColor="cyan"
+                window.setTimeout("g()", 1000)
+            }
+            function g()
+            {
+                document.bgColor="purple"
+                window.setTimeout("h()", 1000)
+            }
+            function h()
+            {
+                window.status("shown 7 distinct colors")
+            }
+            
+        </script><body>
+            <form name="f1">
+                <input type="button" value="Roll your mouse here" onmouseover="a()">
+                <input type="button" value="click here" onclick="h()">
+            </form>
+        </body>
+    </head>
+</html>

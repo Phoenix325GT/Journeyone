@@ -1,0 +1,92 @@
+/* Style for the name in the navigation bar */
+.navbar-brand {
+    font-family: 'Roboto', sans-serif;  /* Apply Roboto font */
+    font-weight: bold;                  /* Bold text */
+    color: #007bff !important;          /* Blue color */
+    font-size: 2.5rem;                  /* Larger font size */
+    letter-spacing: 1px;                /* Increase spacing between letters */
+    line-height: 1.2;                   /* Adjust line height for balance */
+    transition: transform 0.5s ease, color 0.5s ease; /* Smooth transition for scaling and color */
+
+}
+
+/* Optional: Add hover effect */
+.navbar-brand:hover {
+    color: #031a32 !important;          /* Darker blue on hover */
+    transform: scale(1.01);   
+}
+
+/* Style for the hero section */
+.hero-section {
+    background: url('https://via.placeholder.com/1920x1080') no-repeat center center/cover;
+    height: 100vh;
+    color: white;
+    display: flex;
+    align-items: center;
+}
+
+.hero-section h1 {
+    font-size: 4rem;
+    font-weight: bold;
+}
+
+.hero-section p {
+    font-size: 1.5rem;
+}
+
+.hero-section .btn {
+    margin-top: 20px;
+}
+
+/* Smooth scrolling */
+html {
+    scroll-behavior: smooth;
+}
+
+/* Navbar style */
+.navbar {
+    background-color: rgba(255, 255, 255, 0.9);
+}
+
+.nav-link {
+    font-size: 1.1rem;
+    color: #333 !important;
+}
+
+.nav-link:hover {
+    color: #007bff !important;
+}
+
+/* About section */
+#about {
+    padding: 60px 0;
+    text-align: center;
+}
+
+#about h2 {
+    font-size: 3rem;
+}
+
+#about p {
+    font-size: 1.2rem;
+    max-width: 700px;
+    margin: 0 auto;
+}
+/* Existing CSS styles... */
+
+/* Base style for project buttons */
+.project-btn {
+    font-family: 'Roboto', sans-serif;  /* Apply Roboto font */
+    font-weight: bold;                  /* Bold text */
+    color: #007bff;                     /* Blue color */
+    font-size: 1.5rem;                  /* Adjust font size as needed */
+    letter-spacing: 2px;                /* Space between letters */
+    text-decoration: none;               /* Remove underline */
+    transition: transform 0.5s ease, color 0.5s ease; /* Smooth transition */
+}
+
+/* Hover effect for project buttons */
+.project-btn:hover {
+    color: #0056b3;                     /* Darker blue on hover */
+    transform: scale(1.1);              /* Slightly larger text on hover */
+}

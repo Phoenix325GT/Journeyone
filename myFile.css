@@ -4,7 +4,7 @@
     font-weight: bold;                  /* Bold text */
     color: #007bff !important;          /* Blue color */
     font-size: 2.5rem;                  /* Larger font size */
-    letter-spacing: 1px;                /* Increase spacing between letters */
+    letter-spacing: 0.001px;                /* Increase spacing between letters */
     line-height: 1.2;                   /* Adjust line height for balance */
     transition: transform 0.5s ease, color 0.5s ease; /* Smooth transition for scaling and color */
 
@@ -15,10 +15,54 @@
     color: #031a32 !important;          /* Darker blue on hover */
     transform: scale(1.01);   
 }
+/* Global background image for the whole page */
+body::before {
+    content: ''; /* Required for the pseudo-element */
+    position: fixed; /* The image stays fixed in the background */
+    top: 0;
+    left: 0;
+    width: 100%; 
+    height: 100%;
+    background-image: url('bg.jpg'); /* Replace with your image path */
+    background-size: cover; /* Ensures the image covers the entire background */
+    background-position: center; /* Centers the image */
+    opacity: 0.7; /* Controls the transparency of the background image */
+    z-index: -1; /* Puts the background image behind everything */
+}
+
+/* Additional global styles */
+body {
+    position: relative;
+    margin: 0;
+    padding: 0;
+    font-family: 'Roboto', sans-serif;
+    background-color: rgba(255, 255, 255, 0.9); /* Optional: Adds a subtle overlay for better readability */
+}
+
+/* Hero section with its own styles */
+.hero {
+    height: 100vh; /* Full viewport height */
+    background-image: url('bg.jpg'); /* Use the same image here */
+    background-size: cover;
+    background-position: center;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    color: white;
+}
+
+/* Hero content styles */
+.hero-content {
+    background-color: rgba(0, 0, 0, 0.5); /* Semi-transparent background behind text */
+    padding: 20px;
+    border-radius: 10px;
+}
+
 
 /* Style for the hero section */
 .hero-section {
-    background: url('https://via.placeholder.com/1920x1080') no-repeat center center/cover;
+    background: url(bg.jpg) repeat center center/cover;
     height: 100vh;
     color: white;
     display: flex;
@@ -72,6 +116,87 @@ html {
     max-width: 700px;
     margin: 0 auto;
 }
+/* Base styles for projects section */
+.projects-section {
+    background-color: #f8f9fa; /* Light background color */
+    padding: 60px 20px; /* Padding for top and bottom */
+}
+
+.container {
+    max-width: 1200px; /* Width of the content container */
+    margin: 0 auto; /* Center the container */
+    padding: 0 20px;
+}
+
+/* Title style for the section */
+.section-title {
+    text-align: center;
+    font-size: 2.5rem;
+    color: #343a40; /* Dark color for the title */
+    margin-bottom: 40px; /* Space below the title */
+}
+
+/* Grid layout for the project cards */
+.projects-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); /* Responsive grid with auto-sizing columns */
+    gap: 20px; /* Space between project cards */
+}
+
+/* Project card styles */
+.project-card {
+    background-color: white; /* White background for each project card */
+    border-radius: 0px; /* Rounded corners */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Subtle shadow */
+    overflow: hidden; /* Prevents content from overflowing rounded corners */
+    transition: transform 0.3s ease, box-shadow 0.3s ease; /* Smooth transition on hover */
+    text-align: center;
+    padding: 20px;
+}
+
+/* Project image styles */
+.project-image {
+    width: 100%; /* Full width of the card */
+    height: 200px; /* Fixed height for uniformity */
+    object-fit: cover; /* Ensures the image covers the full area */
+    border-radius: 30px 30px 0 0; /* Rounded corners only on the top */
+}
+
+/* Project card title */
+.project-card h3 {
+    font-size: 1.5rem;
+    color: #007bff; /* Blue color for the project title */
+    margin: 15px 0;
+}
+
+/* Project card description */
+.project-card p {
+    font-size: 1rem;
+    color: #6c757d; /* Light gray for the description text */
+    margin-bottom: 20px;
+}
+
 /* Existing CSS styles... */
 
+/* Base style for project buttons */
+/* Base style for project buttons */
+.project-btn {
+    font-family: 'Roboto', sans-serif;  /* Apply Roboto font */
+    font-weight: bold;                  /* Bold text */
+    color: #ffffff;                     /* Blue color */
+    font-size: 1.5rem;                  /* Adjust font size as needed */
+    letter-spacing: 0.5px;                /* Space between letters */
+    transition: transform 0.5s ease, color 0.5s ease; /* Smooth transition */
+    padding: 5px 10px;                 /* Add some padding */
+    border: 1px solid  white ;          /* Border color matching the text */
+    border-radius: 100px;                /* Adjust border-radius for rounded corners */
+    background-color:#007bff;             /* Background color */
+    text-decoration: none;
+}
 
+/* Hover effect for project buttons */
+.project-btn:hover {
+    color: #ffffff;                     /* Darker blue on hover */
+    transform: scale(1.2);              /* Slightly larger text on hover */
+    text-decoration: none;
+}

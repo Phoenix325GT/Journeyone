@@ -74,19 +74,4 @@ html {
 }
 /* Existing CSS styles... */
 
-/* Base style for project buttons */
-.project-btn {
-    font-family: 'Roboto', sans-serif;  /* Apply Roboto font */
-    font-weight: bold;                  /* Bold text */
-    color: #007bff;                     /* Blue color */
-    font-size: 1.5rem;                  /* Adjust font size as needed */
-    letter-spacing: 2px;                /* Space between letters */
-    text-decoration: none;               /* Remove underline */
-    transition: transform 0.5s ease, color 0.5s ease; /* Smooth transition */
-}
 
-/* Hover effect for project buttons */
-.project-btn:hover {
-    color: #0056b3;                     /* Darker blue on hover */
-    transform: scale(1.1);              /* Slightly larger text on hover */
-}

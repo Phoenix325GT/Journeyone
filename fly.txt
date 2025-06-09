@@ -1,0 +1,57 @@
+#include <DHT.h>
+s
+#define DHTPIN 4           // GPIO4 for DHT sensor
+#define DHTTYPE DHT22      // or DHT11
+#define MQ135_PIN 34       // GPIO34 for analog input from MQ135
+
+DHT dht(DHTPIN, DHTTYPE);
+
+void setup() {
+  Serial.begin(115200);
+  dht.begin();
+
+  // Wait for sensor stabilization
+  Serial.println("Smart Environmental Monitoring System Starting...");
+  delay(2000);
+}
+
+void loop() {
+  // Read temperature and humidity
+  float temp = dht.readTemperature();
+  float humidity = dht.readHumidity();
+
+  // Read air quality (analog value)
+  int airQualityRaw = analogRead(MQ135_PIN);
+
+  // Check if reads are successful
+  if (isnan(temp) || isnan(humidity)) {
+    Serial.println("Failed to read from DHT sensor!");
+    return;
+  }
+
+  // Display results
+  Serial.println("=== Environmental Data ===");
+  Serial.print("Temperature: ");
+  Serial.print(temp);
+  Serial.println(" °C");
+
+  Serial.print("Humidity: ");
+  Serial.print(humidity);
+  Serial.println(" %");
+
+  Serial.print("Air Quality (Raw MQ135): ");
+  Serial.println(airQualityRaw);
+
+  // You can add logic here to classify air quality levels
+  if (airQualityRaw < 300) {
+    Serial.println("Air Quality: Good");
+  } else if (airQualityRaw < 600) {
+    Serial.println("Air Quality: Moderate");
+  } else {
+    Serial.println("Air Quality: Poor");
+  }
+
+  Serial.println("===========================\n");
+
+  delay(5000); // Update every 5 seconds or can adjust it by shifting from 5000 to any number you like(rember its in milliseconds)
+}

@@ -8,23 +8,6 @@
 .transparent-navbar .navbar-brand {
     color: white !important;
 }
-.glass-navbar {
-    background: rgba(255, 255, 255, 0.1); /* Very light white with transparency */
-    backdrop-filter: blur(12px);          /* Makes it glassy */
-    -webkit-backdrop-filter: blur(12px);  /* Safari support */
-    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
-    border-bottom: 1px solid rgba(255, 255, 255, 0.3);
-}
-
-.glass-navbar .nav-link,
-.glass-navbar .navbar-brand {
-    color: #ffffff !important;
-    font-weight: 500;
-}
-
-.glass-navbar .nav-link:hover {
-    color: #ffd700 !important; /* golden hover color */
-}
 /*//////*/
 /* Style for the name in the navigation bar */
 .navbar-brand {

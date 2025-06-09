@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Skills</title>
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <!-- Font Awesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+    <!-- Custom Styles from original file -->
+    <style>
+        /* Paste the entire <style> block from the original HTML here */
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        section {
+            padding: 80px 0;
+        }
+        .section-title {
+            text-align: center;
+            margin-bottom: 50px;
+            font-weight: 700;
+        }
+        .skill-card {
+            background-color: #f8f9fa;
+            border-radius: 10px;
+            padding: 20px;
+            text-align: center;
+            transition: all 0.3s ease-in-out;
+        }
+        .skill-card:hover {
+             background-color: #e9ecef;
+             transform: scale(1.05);
+        }
+        .skill-card .icon {
+            font-size: 3rem;
+            margin-bottom: 15px;
+            color: #007bff;
+        }
+        /* ...and so on for any other custom styles */
+    </style>
+</head>
+<body>
+
+    <!-- Your selected "Skills Section" code goes here -->
+    <section id="skills" class="py-5 bg-light">
+        <div class="container">
+            <h2 class="section-title">My Skills</h2>
+            <div class="row justify-content-center">
+                <!-- Skill 4: Physics Simulation -->
+                <div class="col-lg-3 col-md-6 mb-4">
+                    <div class="skill-card h-100">
+                        <div class="icon"><i class="fas fa-atom"></i></div>
+                        <h5 class="card-title">Physics Simulation</h5>
+                        <p class="card-text">Ability to model and simulate physical systems to understand complex phenomena.</p>
+                    </div>
+                </div>
+                 <!-- Skill 5: HTML/CSS -->
+                <div class="col-lg-3 col-md-6 mb-4">
+                    <div class="skill-card h-100">
+                        <div class="icon"><i class="fab fa-html5"></i></div>
+                        <h5 class="card-title">HTML & CSS</h5>
+                        <p class="card-text">Creating responsive and well-structured web pages.</p>
+                    </div>
+                </div>
+                <!-- Skill 7: Git & GitHub -->
+                <div class="col-lg-3 col-md-6 mb-4">
+                    <div class="skill-card h-100">
+                        <div class="icon"><i class="fab fa-github"></i></div>
+                        <h5 class="card-title">Git & GitHub</h5>
+                        <p class="card-text">Version control and collaborative development.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+</body>
+</html>

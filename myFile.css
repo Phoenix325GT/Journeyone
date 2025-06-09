@@ -200,4 +200,12 @@ html {
     transform: scale(1.2);              /* Slightly larger text on hover */
     text-decoration: none;
 }
+/* Fade out siblings on hover effect */
+.navbar-nav:hover .nav-link {
+    opacity: 0.3;
+    transition: opacity 0.3s ease;
+}
 
+.navbar-nav .nav-link:hover {
+    opacity: 1 !important;
+}

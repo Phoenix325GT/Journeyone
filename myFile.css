@@ -193,10 +193,20 @@ html {
     background-color:#007bff;             /* Background color */
     text-decoration: none;
 }
-
 /* Hover effect for project buttons */
 .project-btn:hover {
     color: #ffffff;                     /* Darker blue on hover */
     transform: scale(1.2);              /* Slightly larger text on hover */
     text-decoration: none;
 }
+.transparent-navbar {
+    background-color: rgba(255, 255, 255, 0.1); /* almost transparent */
+    backdrop-filter: blur(10px); /* adds glass blur effect */
+    transition: background-color 0.3s ease;
+}
+
+.transparent-navbar .nav-link,
+.transparent-navbar .navbar-brand {
+    color: white !important;
+}
+

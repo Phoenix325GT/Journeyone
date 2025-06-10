@@ -33,7 +33,7 @@
             padding-bottom: 5px; /* Add some space above the SVG underline */
         }
 
-        /* Styles for the SVG scribble underline */
+        /* Styles for the SVG scribble underline for main header */
         .scribble-underline {
             display: block; /* Make it block level to take full width */
             margin: 0 auto 20px auto; /* Center it and add space below */
@@ -80,7 +80,9 @@
         }
 
         .project-modal-content {
-            background-color: white;
+            background-color: rgba(255, 255, 255, 0.05); /* Very transparent white for glass look */
+            backdrop-filter: blur(15px); /* Blur effect for the glass look */
+            -webkit-backdrop-filter: blur(15px); /* Webkit prefix for compatibility */
             padding: 20px;
             border-radius: 15px;
             max-width: 700px; /* Max width for the modal content */
@@ -103,26 +105,34 @@
             background: none;
             border: none;
             cursor: pointer;
-            color: #6c757d;
+            color: #ffffff; /* Changed close button color to white */
         }
-
-        /* Removed styling for project-modal-content img as it's no longer displayed */
-        /* .project-modal-content img {
-            max-width: 100%;
-            height: auto;
-            border-radius: 10px;
-            margin-bottom: 20px;
-        } */
 
         .project-modal-content h5 {
             font-size: 1.8rem;
-            color: #007bff;
-            margin-bottom: 10px;
+            color: #007bff; /* Changed title color to blue */
+            margin-bottom: 0; /* Adjust margin for scribble below */
+            padding-bottom: 5px; /* Space between title and scribble */
+            display: inline-block; /* Allows SVG to align below */
+            position: relative; /* Needed for centering modal scribble */
+        }
+
+        /* Styles for the modal's scribble underline */
+        .modal-scribble-underline {
+            display: block;
+            /* Increased width and height for a bigger underline */
+            width: 200px; /* Adjusted width */
+            height: 30px; /* Adjusted height */
+            margin: 0 auto 15px auto; /* Center and add more space below */
+            stroke: #007bff; /* Blue color for modal scribble */
+            stroke-width: 3; /* Increased thickness for modal scribble */
+            fill: none;
+            overflow: visible;
         }
 
         .project-modal-content p {
             font-size: 1rem;
-            color: #495057;
+            color: #ffffff; /* Changed paragraph text color to white */
             margin-bottom: 20px;
         }
 
@@ -144,6 +154,11 @@
             }
             .project-modal-content h5 {
                 font-size: 1.5rem;
+            }
+            .modal-scribble-underline {
+                width: 150px; /* Adjusted width for smaller screens */
+                height: 25px; /* Adjusted height for smaller screens */
+                stroke-width: 2.5; /* Adjusted thickness */
             }
         }
     </style>
@@ -192,6 +207,7 @@
                         data-title="Listen to the classic" 
                         data-image="pexels-kseniachernaya-5691628.jpg" 
                         data-description="Developed a page which displays Audio and functions Properly. Is one of my very own first webpage in html" 
+                        data-modal-description="A nostalgic web page featuring an audio player for a classic internet meme. My initial venture into HTML development." 
                         data-link="https://phoenix325gt.github.io/Journeyone/Audio.html">
                         <img src="pexels-kseniachernaya-5691628.jpg" class="card-img-top" alt="Rick Roll">
                         <div class="card-body">
@@ -210,6 +226,7 @@
                         data-title="Flying Fish Sensor: Environmental Monitoring"
                         data-image="pexels-chevanon-325045.jpg"
                         data-description="Designed a smart system using the Flying Fish sensor series for environmental monitoring, focusing on air quality and temperature data analysis. Here's the Code."
+                        data-modal-description="An IoT project showcasing environmental data collection with Flying Fish sensors, focusing on air quality and temperature."
                         data-link="fly.txt">
                         <img src="pexels-chevanon-325045.jpg" class="card-img-top" alt="Flying Fish Sensor Project">
                         <div class="card-body">
@@ -228,6 +245,7 @@
                         data-title="Artificial intelligence in sustainable battery research"
                         data-image="neural.jpg"
                         data-description="Using AI to research on Sustainable batteries."
+                        data-modal-description="Exploration into applying artificial intelligence for advancements in sustainable battery technology research."
                         data-link="https://docs.google.com/document/d/17TS63dxsJfpTWrUa0hQHeWrhlXiyA8XUH3rMZCjIa0M/edit?usp=sharing">
                         <img src="neural.jpg" class="card-img-top" alt="AI Neural Network Project">
                         <div class="card-body">
@@ -249,6 +267,10 @@
         <div class="project-modal-content">
             <button class="close-button" id="closeModalBtn">&times;</button>
             <h5 id="modalProjectTitle"></h5>
+            <!-- SVG for the modal heading scribble underline -->
+            <svg class="modal-scribble-underline" viewBox="0 0 200 30" preserveAspectRatio="none">
+                <path d="M5,15 C50,5 150,25 195,15" />
+            </svg>
             <p id="modalProjectDescription"></p>
             <a id="modalProjectLink" href="#" class="btn btn-primary" target="_blank">View Project</a>
         </div>
@@ -288,12 +310,13 @@
             $('.card').on('click', function() {
                 const card = $(this);
                 const title = card.data('title');
-                const description = card.data('description');
+                // Use data-modal-description for the modal's description
+                const modalDescription = card.data('modal-description'); 
                 const link = card.data('link');
 
                 // Populate modal with card data
                 modalProjectTitle.text(title);
-                modalProjectDescription.text(description);
+                modalProjectDescription.text(modalDescription); // Use the new modal description
                 modalProjectLink.attr('href', link);
 
                 // Show the modal

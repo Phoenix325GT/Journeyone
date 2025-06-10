@@ -3,86 +3,306 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>My Skills</title>
-    <!-- Bootstrap CSS -->
+    <title>My Skill Journey</title>
+    <!-- Bootstrap CSS for basic styling and grid -->
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
-    <!-- Font Awesome for Icons -->
+    <!-- Font Awesome for skill icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
-    <!-- Custom Styles from original file -->
+    <!-- Inter font for clean typography -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap" rel="stylesheet">
     <style>
-        /* Paste the entire <style> block from the original HTML here */
+        /* General body styling for font and background */
         body {
             font-family: 'Inter', sans-serif;
+            background-color: #f0f2f5;
         }
-        section {
-            padding: 80px 0;
-        }
+        /* Section title styling */
         .section-title {
             text-align: center;
             margin-bottom: 50px;
             font-weight: 700;
+            color: #333; /* Darker color for title */
         }
-        .skill-card {
-            background-color: #f8f9fa;
+        /* Container for the SVG skill journey */
+        #skill-journey-container {
+            position: relative;
+            width: 100%;
+            max-width: 800px; /* Max width to keep it centered and readable */
+            margin: 0 auto; /* Center the container */
+            padding: 40px 0;
+            display: flex; /* Flexbox for centering content within */
+            justify-content: center;
+            align-items: center;
+            min-height: 650px; /* Ensure container has space for SVG path */
+        }
+        /* Styling for the SVG path representing the journey line */
+        #skill-path {
+            stroke: #007bff; /* Blue color for the path */
+            stroke-width: 4; /* Thickness of the path */
+            stroke-dasharray: 8; /* Dashed line effect */
+            fill: none; /* No fill for the path */
+            animation: draw-path 5s linear forwards; /* Animation to draw the path */
+        }
+        /* Keyframe animation for drawing the path */
+        @keyframes draw-path {
+            from { stroke-dashoffset: 1500; } /* Start with path fully offset */
+            to { stroke-dashoffset: 0; } /* End with path fully drawn */
+        }
+        /* Styling for the interactive skill dots */
+        .skill-dot {
+            fill: #007bff; /* Blue fill for dots */
+            stroke: white; /* White border for dots */
+            stroke-width: 3; /* Border thickness */
+            cursor: pointer; /* Pointer cursor to indicate interactivity */
+            transition: all 0.2s ease-in-out; /* Smooth transition for hover effects */
+        }
+        /* Hover effect for skill dots */
+        .skill-dot:hover {
+            fill: #0056b3; /* Darker blue on hover */
+            transform-box: fill-box; /* Ensures transform origin is correct for SVG elements */
+            transform-origin: center; /* Scale from the center */
+            transform: scale(1.5); /* Enlarge dot on hover */
+        }
+
+        /* Popover card styling */
+        #skill-card-popover {
+            position: absolute; /* Absolute positioning relative to skill-journey-container */
+            width: 280px; /* Slightly wider to accommodate new content */
+            background-color: white;
             border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15); /* Soft shadow */
             padding: 20px;
-            text-align: center;
-            transition: all 0.3s ease-in-out;
+            /* Removed pointer-events: none; to allow interaction with buttons */
+
+            /* Use visibility and opacity for smooth transitions */
+            visibility: hidden;
+            opacity: 0;
+            transform: translateY(15px); /* Start slightly below its final position */
+            transition: opacity 0.3s ease, transform 0.3s ease, visibility 0s 0.3s;
+            z-index: 10; /* Ensure it's above other elements */
         }
-        .skill-card:hover {
-             background-color: #e9ecef;
-             transform: scale(1.05);
+        /* Class to make the popover visible */
+        #skill-card-popover.visible {
+            visibility: visible;
+            opacity: 1;
+            transform: translateY(0); /* Move to final position */
+            transition: opacity 0.3s ease, transform 0.3s ease, visibility 0s 0s; /* No delay on showing */
         }
-        .skill-card .icon {
-            font-size: 3rem;
-            margin-bottom: 15px;
+        /* Styling for the title within the popover */
+        #skill-card-popover h5 {
+            color: #007bff;
+            font-weight: 700;
+            margin-bottom: 10px;
+            display: flex; /* Use flex to align icon and text */
+            align-items: center;
+        }
+        /* Styling for the date within the popover */
+        #skill-card-popover .date {
+            font-size: 0.8rem;
+            color: #6c757d;
+            margin-bottom: 10px;
+        }
+        /* Styling for the description within the popover */
+        #skill-card-popover p {
+            font-size: 0.9rem;
+            margin-bottom: 10px; /* Add margin for button */
+        }
+        /* Styling for the skill icon within the popover */
+        .skill-icon {
+            font-size: 1.5rem;
+            margin-right: 10px;
             color: #007bff;
         }
-        /* ...and so on for any other custom styles */
+
+        /* Close button for the popover */
+        .close-popover-btn {
+            position: absolute;
+            top: 5px;
+            right: 5px;
+            background: none;
+            border: none;
+            font-size: 1.2rem;
+            color: #6c757d;
+            cursor: pointer;
+            padding: 5px;
+            line-height: 1; /* For better icon alignment */
+            transition: color 0.2s ease;
+        }
+        .close-popover-btn:hover {
+            color: #333;
+        }
+
+        /* Responsive adjustments for smaller screens */
+        @media (max-width: 768px) {
+            #skill-journey-container {
+                padding: 20px 0;
+            }
+            .section-title {
+                margin-bottom: 30px;
+            }
+            #skill-card-popover {
+                width: 90%; /* Make popover almost full width on small screens */
+                left: 5% !important; /* Center it */
+                right: 5% !important;
+                transform: translateY(0) !important; /* No initial transform for mobile */
+                top: auto !important; /* Allow positioning from bottom */
+                bottom: 20px; /* Stick to the bottom */
+            }
+            .skill-dot:hover {
+                transform: scale(1.2); /* Less aggressive scale for touch devices */
+            }
+        }
     </style>
 </head>
 <body>
 
-    <!-- Your selected "Skills Section" code goes here -->
     <section id="skills" class="py-5 bg-light">
         <div class="container">
-            <h2 class="section-title">My Skills</h2>
-            <div class="row justify-content-center">
-                <!-- Skill 4: Physics Simulation -->
-                <div class="col-lg-3 col-md-6 mb-4">
-                    <div class="skill-card h-100">
-                        <div class="icon"><i class="fas fa-atom"></i></div>
-                        <h5 class="card-title">Physics Simulation</h5>
-                        <p class="card-text">Ability to model and simulate physical systems to understand complex phenomena.</p>
-                    </div>
+            <h2 class="section-title">My Skill Journey</h2>
+            <div id="skill-journey-container">
+
+                <!-- The popover card for displaying skill details -->
+                <div id="skill-card-popover">
+                    <!-- Initial content will be populated by JS -->
                 </div>
-                 <!-- Skill 5: HTML/CSS -->
-                <div class="col-lg-3 col-md-6 mb-4">
-                    <div class="skill-card h-100">
-                        <div class="icon"><i class="fab fa-html5"></i></div>
-                        <h5 class="card-title">HTML & CSS</h5>
-                        <p class="card-text">Creating responsive and well-structured web pages.</p>
-                    </div>
-                </div>
-                <!-- Skill 7: Git & GitHub -->
-                <div class="col-lg-3 col-md-6 mb-4">
-                    <div class="skill-card h-100">
-                        <div class="icon"><i class="fab fa-github"></i></div>
-                        <h5 class="card-title">Git & GitHub</h5>
-                        <p class="card-text">Version control and collaborative development.</p>
-                    </div>
-                </div>
-                <!-- Skill 8: Onshape / CAD -->
-                <div class="col-lg-3 col-md-6 mb-4">
-                    <div class="skill-card h-100">
-                        <div class="icon"><i class="fas fa-drafting-compass"></i></div>
-                        <h5 class="card-title">Onshape / CAD</h5>
-                        <p class="card-text">3D modeling and computer-aided design using cloud-based platforms.</p>
-                    </div>
-                </div>
+
+                <!-- SVG for drawing the skill path and dots -->
+                <svg viewBox="0 0 400 600" preserveAspectRatio="xMidYMid meet" style="width: 100%; height: 100%;">
+                    <!-- The path representing the skill journey -->
+                    <path id="skill-path" d="M 200,50 L 200,100 C 250,150 100,200 150,250 C 200,300 300,350 250,400 C 150,450 250,500 200,550" />
+
+                    <!-- Skill Dot: HTML & CSS (2022) -->
+                    <circle class="skill-dot" cx="200" cy="100" r="10"
+                        data-title="HTML & CSS"
+                        data-icon="fab fa-html5"
+                        data-date="Achieved: 2022"
+                        data-description="Mastering the foundational languages for building responsive and well-structured web pages.">
+                    </circle>
+
+                    <!-- Skill Dot: Git & GitHub (2023) -->
+                    <circle class="skill-dot" cx="150" cy="250" r="10"
+                        data-title="Git & GitHub"
+                        data-icon="fab fa-github"
+                        data-date="Achieved: 2023"
+                        data-description="Proficient in version control for collaborative and efficient project development, including branching and merging.">
+                    </circle>
+
+                    <!-- Skill Dot: Onshape / CAD (2024) -->
+                    <circle class="skill-dot" cx="250" cy="400" r="10"
+                        data-title="Onshape / CAD"
+                        data-icon="fas fa-drafting-compass"
+                        data-date="Achieved: 2024"
+                        data-description="Skilled in 3D modeling and computer-aided design using cloud-based platforms like Onshape for product development.">
+                    </circle>
+
+                    <!-- Skill Dot: Physics Simulation (2025) -->
+                    <circle class="skill-dot" cx="200" cy="550" r="10"
+                        data-title="Physics Simulation"
+                        data-icon="fas fa-atom"
+                        data-date="Achieved: 2025"
+                        data-description="Ability to model and simulate physical systems to understand complex phenomena and predict behavior.">
+                    </circle>
+                </svg>
             </div>
         </div>
     </section>
+
+    <!-- jQuery for easier DOM manipulation and event handling -->
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+
+    <script>
+        $(document).ready(function() {
+            const popover = $('#skill-card-popover');
+            const container = $('#skill-journey-container');
+            let hidePopoverTimer; // To manage delayed hiding of the popover
+
+            // Attach event listeners to all skill dots
+            $('.skill-dot').on('mouseenter click', function(e) {
+                clearTimeout(hidePopoverTimer); // Clear any pending hide timer
+
+                const dot = $(this); // The currently hovered/clicked dot
+
+                // Retrieve skill details from data attributes
+                const title = dot.data('title');
+                const icon = dot.data('icon');
+                const date = dot.data('date');
+                const description = dot.data('description');
+
+                // Build the HTML content for the popover card
+                const newContent = `
+                    <button class="close-popover-btn" aria-label="Close popover"><i class="fas fa-times"></i></button>
+                    <h5><i class="${icon} skill-icon"></i> ${title}</h5>
+                    <div class="date">${date}</div>
+                    <p>${description}</p>
+                    <button id="learnMoreBtn" class="btn btn-primary btn-sm mt-2">Learn More ✨</button>
+                `;
+
+                // Update the card's content
+                popover.html(newContent);
+
+                // Attach click listener to the "Learn More" button
+                $('#learnMoreBtn').off('click').on('click', function() {
+                    // Redirect to your projects page/section
+                    window.location.href = 'your-projects-page.html'; // Replace with your actual projects URL or section ID
+                });
+
+                // Attach click listener to the close button
+                $('.close-popover-btn').off('click').on('click', function() {
+                    popover.removeClass('visible');
+                    clearTimeout(hidePopoverTimer); // Ensure no delayed re-showing
+                });
+
+                // --- POSITIONING LOGIC ---
+                const containerRect = container[0].getBoundingClientRect();
+                const dotRect = this.getBoundingClientRect();
+                const popoverHeight = popover.outerHeight();
+                const popoverWidth = popover.outerWidth();
+
+                let top = dotRect.top - containerRect.top + (dotRect.height / 2) - (popoverHeight / 2);
+                let left = dotRect.left - containerRect.left + dotRect.width + 20;
+
+                // Adjust position if the popover would go off-screen to the right
+                if (left + popoverWidth > container.width()) {
+                    left = dotRect.left - containerRect.left - popoverWidth - 20;
+                }
+
+                // Ensure the popover doesn't go off the top or bottom of the container
+                if (top < 0) {
+                    top = 10;
+                }
+                if (top + popoverHeight > container.height()) {
+                    top = container.height() - popoverHeight - 10;
+                }
+
+                // Apply the calculated position and show the card
+                popover.css({
+                    'top': `${top}px`,
+                    'left': `${left}px`
+                });
+
+                popover.addClass('visible');
+            });
+
+            // Hide the popover after a delay when mouse leaves a skill dot
+            $('.skill-dot').on('mouseleave', function() {
+                hidePopoverTimer = setTimeout(() => {
+                    popover.removeClass('visible');
+                }, 300); // Small delay to allow mouse to move to the popover
+            });
+
+            // When mouse enters the popover, clear the hide timer (keeps it visible)
+            popover.on('mouseenter', function() {
+                clearTimeout(hidePopoverTimer);
+            });
+
+            // When mouse leaves the popover, start the hide timer
+            popover.on('mouseleave', function() {
+                hidePopoverTimer = setTimeout(() => {
+                    popover.removeClass('visible');
+                }, 300); // Small delay before hiding
+            });
+        });
+    </script>
 
 </body>
 </html>

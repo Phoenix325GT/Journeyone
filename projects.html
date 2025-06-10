@@ -64,29 +64,29 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background-color: rgba(0, 0, 0, 0.7); /* Semi-transparent black overlay */
+            background-color: transparent; /* Keep this transparent for the blur */
             display: flex;
             justify-content: center;
             align-items: center;
             z-index: 1050; /* Higher than Bootstrap's default modal z-index */
             opacity: 0;
             visibility: hidden;
-            transition: opacity 0.3s ease, visibility 0.3s ease;
+            transition: opacity 0.3s ease, visibility 0.3s ease, backdrop-filter 0.3s ease;
         }
 
         .project-modal-overlay.show {
             opacity: 1;
             visibility: visible;
+            backdrop-filter: blur(10px); /* Apply blur directly to the overlay */
+            -webkit-backdrop-filter: blur(10px); /* Webkit prefix for compatibility */
         }
 
         .project-modal-content {
-            background-color: rgba(255, 255, 255, 0.05); /* Very transparent white for glass look */
-            backdrop-filter: blur(15px); /* Blur effect for the glass look */
-            -webkit-backdrop-filter: blur(15px); /* Webkit prefix for compatibility */
+            background-color: rgba(173, 216, 230, 0.6); /* Light blue background for the modal content */
             padding: 20px;
             border-radius: 15px;
             max-width: 700px; /* Max width for the modal content */
-            width: 90%; /* Responsive width */
+            width: 80%; /* Responsive width */
             box-shadow: 0 5px 20px rgba(0, 0, 0, 0.3);
             position: relative;
             transform: translateY(20px); /* Start slightly off-screen */
@@ -100,20 +100,21 @@
 
         .project-modal-content .close-button {
             position: absolute;
-            top: 15px;
+            top: 10px;
             right: 15px;
             font-size: 1.5rem;
             background: none;
             border: none;
             cursor: pointer;
-            color: #ffffff; /* Changed close button color to white */
+            color: #000000; /* Close button color remains white for visibility */
         }
 
         .project-modal-content h5 {
-            font-size: 1.8rem;
-            color: #007bff; /* Changed title color to blue */
+            font-size: 1.6rem;
+            color: #2E2E2E; /* Header text color set to White */
+            font-weight: 800; /* Made the text bolder */
             margin-bottom: 0; /* Adjust margin for scribble below */
-            padding-bottom: 5px; /* Space between title and scribble */
+            padding-bottom: 2px; /* Space between title and scribble */
             display: inline-block; /* Allows SVG to align below */
             position: relative; /* Needed for centering modal scribble */
         }
@@ -131,8 +132,8 @@
         }
 
         .project-modal-content p {
-            font-size: 1rem;
-            color: #ffffff; /* Changed paragraph text color to white */
+            font-size: 1.1rem;
+            color: #1C1C1C ; /* Paragraph text color changed to steelblue */
             margin-bottom: 20px;
         }
 
@@ -167,7 +168,7 @@
     <!-- Navigation Bar -->
     <nav class="navbar navbar-expand-lg navbar-light bg-light fixed-top">
         <div class="container">
-            <a class="navbar-brand" href="myWebsite.html">Ameen Shaikh</a> <!-- Link back to homepage -->
+            <a class="navbar-brand" href="index.html">Ameen Shaikh</a> <!-- Link back to homepage -->
             <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
@@ -210,7 +211,7 @@
                         data-modal-description="A nostalgic web page featuring an audio player for a classic internet meme. My initial venture into HTML development." 
                         data-link="https://phoenix325gt.github.io/Journeyone/Audio.html"
                         data-modal-scribble-path="M5,15 C40,5 100,25 150,10 C180,0 195,20 195,15">
-                        <img src="pexels-kseniachernaya-5691628.jpg" class="card-img-top" alt="Rick Roll">
+                        <img src="https://placehold.co/400x200/007bff/ffffff?text=Project+1+Image" class="card-img-top" alt="Rick Roll">
                         <div class="card-body">
                             <h5 class="card-title">Listen to the classic</h5>
                             <p class="card-text">Developed a page which displays Audio and functions Properly. Is one of my very own first webpage in html</p>
@@ -230,7 +231,7 @@
                         data-modal-description="An IoT project showcasing environmental data collection with Flying Fish sensors, focusing on air quality and temperature."
                         data-link="fly.txt"
                         data-modal-scribble-path="M5,20 C30,10 70,30 120,15 C150,5 180,25 195,10">
-                        <img src="pexels-chevanon-325045.jpg" class="card-img-top" alt="Flying Fish Sensor Project">
+                        <img src="https://placehold.co/400x200/007bff/ffffff?text=Project+2+Image" class="card-img-top" alt="Flying Fish Sensor Project">
                         <div class="card-body">
                             <h5 class="card-title">Flying Fish Sensor: Environmental Monitoring</h5>
                             <p class="card-text">Designed a smart system using the Flying Fish sensor series for environmental monitoring, focusing on air quality and temperature data analysis. Here's the Code.</p>
@@ -250,7 +251,7 @@
                         data-modal-description="Exploration into applying artificial intelligence for advancements in sustainable battery technology research."
                         data-link="https://docs.google.com/document/d/17TS63dxsJfpTWrUa0hQHeWrhlXiyA8XUH3rMZCjIa0M/edit?usp=sharing"
                         data-modal-scribble-path="M5,10 Q50,30 95,10 T195,20">
-                        <img src="neural.jpg" class="card-img-top" alt="AI Neural Network Project">
+                        <img src="https://placehold.co/400x200/007bff/ffffff?text=Project+3+Image" class="card-img-top" alt="AI Neural Network Project">
                         <div class="card-body">
                             <h5 class="card-title">Artificial intelligence in sustainable battery research</h5>
                             <p class="card-text">Using AI to research on Sustainable batteries.</p>

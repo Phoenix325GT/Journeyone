@@ -1,0 +1,422 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Under Construction - Ameen Shaikh</title>
+    <!-- Bootstrap CSS for basic styling and grid -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <!-- Font Awesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+    <!-- Inter font for clean typography -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="icon" href="favicon.ico" type="image/x-icon">
+    
+    <style>
+        /* General body styling for font and background matching your theme */
+        body {
+            font-family: 'Inter', sans-serif;
+            min-height: 100vh;
+            margin: 0;
+            display: flex; /* Use flexbox to center content */
+            justify-content: center;
+            align-items: center;
+            background: linear-gradient(135deg, #f0f2f5 0%, #e0e6ec 100%); /* Matching gradient */
+            color: #2c3e50; /* Dark text for contrast */
+            text-align: center;
+            overflow: hidden; /* Prevent scrollbars */
+        }
+
+        /* Main content container for the message */
+        .content-wrapper {
+            background-color: white;
+            border-radius: 15px; /* Rounded corners */
+            box-shadow: 0 10px 30px rgba(0,0,0,0.15); /* Soft shadow */
+            padding: 40px;
+            max-width: 600px; /* Limit width for readability */
+            margin: 20px; /* Ensure some margin on small screens */
+            width: 100%; /* Responsive width */
+            transition: opacity 0.3s ease, visibility 0.3s ease; /* For smooth hide/show */
+        }
+
+        /* Title styling matching your website's H2 */
+        h1 {
+            font-size: 3.5rem;
+            font-weight: 700;
+            color: #2c3e50;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+
+        /* Subtitle/message styling */
+        p {
+            font-size: 1.15rem;
+            color: #6c757d; /* Grey text for body */
+            margin-bottom: 30px;
+        }
+
+        /* Icon styling and animation */
+        .construction-icon {
+            font-size: 5rem; /* Large icon */
+            color: #ff5722; /* Vibrant orange accent */
+            margin-bottom: 20px;
+            display: inline-block; /* Required for transform animations */
+            animation: pulse 2s infinite ease-in-out; /* Apply pulse animation */
+            cursor: pointer; /* Indicate it's clickable */
+        }
+
+        /* Keyframes for the pulsing animation */
+        @keyframes pulse {
+            0% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.1); opacity: 0.8; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+
+        /* Button styling matching your website's primary buttons */
+        .btn-primary {
+            background: linear-gradient(135deg, #007bff 0%, #0056b3 100%); /* Blue gradient */
+            border: none;
+            border-radius: 25px; /* Rounded button */
+            padding: 12px 25px;
+            font-size: 1rem;
+            font-weight: 700;
+            box-shadow: 0 4px 10px rgba(0, 123, 255, 0.3); /* Button shadow */
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-3px); /* Slight lift on hover */
+            box-shadow: 0 6px 15px rgba(0, 123, 255, 0.4);
+            background: linear-gradient(135deg, #0056b3 0%, #007bff 100%); /* Invert gradient on hover */
+        }
+
+        /* Hidden class for toggling visibility */
+        .hidden {
+            opacity: 0;
+            visibility: hidden;
+            pointer-events: none; /* Disable interaction when hidden */
+            position: absolute; /* Take out of flow when hidden */
+        }
+
+        /* Game Container Styles */
+        #game-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            background-color: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+            padding: 20px;
+            max-width: 600px;
+            margin: 20px;
+            width: 100%;
+            transition: opacity 0.3s ease, visibility 0.3s ease;
+        }
+
+        canvas {
+            border: 5px solid #2c3e50; /* Dark border matching text color */
+            border-radius: 8px;
+            background-color: #f7fafc; /* Light background for canvas */
+            touch-action: none; /* Prevent default touch actions like scrolling/zooming */
+        }
+
+        #game-controls {
+            margin-top: 20px;
+            display: flex;
+            flex-wrap: wrap; /* Allow buttons to wrap */
+            justify-content: center;
+            gap: 10px; /* Space between buttons */
+        }
+        
+        #score-display {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #007bff;
+            margin-bottom: 15px;
+        }
+
+        /* Responsive buttons for touch devices */
+        .game-control-button {
+            background: linear-gradient(135deg, #007bff 0%, #0056b3 100%);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            padding: 15px 20px;
+            font-size: 1.2rem;
+            cursor: pointer;
+            transition: transform 0.1s ease;
+            width: 80px; /* Fixed width for consistent sizing */
+            height: 60px; /* Fixed height */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .game-control-button:active {
+            transform: scale(0.95);
+        }
+
+        /* Arrow button grid layout */
+        .arrow-controls {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            grid-template-rows: repeat(3, 1fr);
+            gap: 5px;
+            width: 200px; /* Fixed width for the arrow control cluster */
+            margin: 10px auto;
+        }
+
+        .arrow-controls .game-control-button {
+            grid-column: 2; /* Center column by default */
+        }
+        .arrow-controls .game-control-button:nth-child(1) { grid-row: 1; } /* Up */
+        .arrow-controls .game-control-button:nth-child(2) { grid-row: 2; grid-column: 1; } /* Left */
+        .arrow-controls .game-control-button:nth-child(3) { grid-row: 2; grid-column: 3; } /* Right */
+        .arrow-controls .game-control-button:nth-child(4) { grid-row: 3; } /* Down */
+
+        /* Hide desktop arrow keys on small screens */
+        @media (min-width: 769px) {
+            .arrow-controls {
+                display: none; /* Hide on desktop, use keyboard */
+            }
+        }
+        /* Show desktop arrow keys on small screens */
+        @media (max-width: 768px) {
+             .arrow-controls {
+                display: grid; /* Show on mobile for touch input */
+            }
+            .content-wrapper {
+                padding: 20px; /* Reduce padding on smaller screens */
+            }
+            h1 {
+                font-size: 2.5rem; /* Adjust title for smaller screens */
+            }
+            .construction-icon {
+                font-size: 4rem; /* Smaller icon on mobile */
+            }
+            p {
+                font-size: 1rem;
+            }
+            #game-container {
+                padding: 15px;
+            }
+            canvas {
+                width: 95%; /* Adjust canvas size for mobile */
+                height: auto;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="content-wrapper" id="construction-content">
+        <i class="fas fa-tools construction-icon" id="play-game-icon"></i> <!-- Clickable tools icon -->
+        <h1>Under Construction</h1>
+        <p>We're busy building something amazing! Please check back soon for updates.</p>
+        <a href="myWebsite.html" class="btn btn-primary">Back to Home</a>
+    </div>
+
+    <div id="game-container" class="hidden">
+        <div id="score-display">Score: 0</div>
+        <canvas id="snakeGameCanvas" width="400" height="400"></canvas>
+        <div id="game-controls">
+            <div class="arrow-controls">
+                <button class="game-control-button" id="up-btn"><i class="fas fa-arrow-up"></i></button>
+                <button class="game-control-button" id="left-btn"><i class="fas fa-arrow-left"></i></button>
+                <button class="game-control-button" id="right-btn"><i class="fas fa-arrow-right"></i></button>
+                <button class="game-control-button" id="down-btn"><i class="fas fa-arrow-down"></i></button>
+            </div>
+            <button class="btn btn-primary" id="restart-game-btn" style="display: none;">Restart Game</button>
+            <button class="btn btn-primary" id="back-to-construction-btn">Back to Construction</button>
+        </div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script>
+        $(document).ready(function() {
+            const constructionContent = $('#construction-content');
+            const gameContainer = $('#game-container');
+            const playGameIcon = $('#play-game-icon');
+            const backToConstructionBtn = $('#back-to-construction-btn');
+            const restartGameBtn = $('#restart-game-btn');
+            const scoreDisplay = $('#score-display');
+
+            const canvas = $('#snakeGameCanvas')[0];
+            const ctx = canvas.getContext('2d');
+            const gridSize = 20;
+            let snake = [{ x: 10, y: 10 }]; // Initial snake position
+            let food = {};
+            let dx = gridSize; // Initial movement direction (right)
+            let dy = 0;
+            let score = 0;
+            let gameInterval; // To hold the game loop interval
+            let gameStarted = false;
+            let changingDirection = false; // Flag to prevent rapid direction changes
+
+            // Game functions
+            function generateFood() {
+                food = {
+                    x: Math.floor(Math.random() * (canvas.width / gridSize)) * gridSize,
+                    y: Math.floor(Math.random() * (canvas.height / gridSize)) * gridSize
+                };
+                // Ensure food doesn't spawn on the snake
+                while (snake.some(segment => segment.x === food.x && segment.y === food.y)) {
+                    food = {
+                        x: Math.floor(Math.random() * (canvas.width / gridSize)) * gridSize,
+                        y: Math.floor(Math.random() * (canvas.height / gridSize)) * gridSize
+                    };
+                }
+            }
+
+            function draw() {
+                // Clear canvas
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+                // Draw food
+                ctx.fillStyle = '#e53e3e'; /* Red color for food */
+                ctx.strokeStyle = '#a00';
+                ctx.fillRect(food.x, food.y, gridSize, gridSize);
+                ctx.strokeRect(food.x, food.y, gridSize, gridSize);
+
+                // Draw snake
+                ctx.fillStyle = '#10b981'; /* Green color for snake */
+                ctx.strokeStyle = '#086';
+                snake.forEach(segment => {
+                    ctx.fillRect(segment.x, segment.y, gridSize, gridSize);
+                    ctx.strokeRect(segment.x, segment.y, gridSize, gridSize);
+                });
+            }
+
+            function update() {
+                if (!gameStarted) return;
+
+                changingDirection = false; // Reset flag at the start of each update cycle
+
+                const head = { x: snake[0].x + dx, y: snake[0].y + dy };
+
+                // Game over conditions
+                // Wall collision
+                if (head.x < 0 || head.x >= canvas.width || head.y < 0 || head.y >= canvas.height) {
+                    endGame();
+                    return;
+                }
+                // Self-collision (start checking from segment 4 to avoid immediate collision with neck)
+                for (let i = 4; i < snake.length; i++) {
+                    if (head.x === snake[i].x && head.y === snake[i].y) {
+                        endGame();
+                        return;
+                    }
+                }
+
+                snake.unshift(head); // Add new head
+
+                // Food consumption
+                if (head.x === food.x && head.y === food.y) {
+                    score += 10;
+                    scoreDisplay.text(`Score: ${score}`);
+                    generateFood(); // Generate new food
+                } else {
+                    snake.pop(); // Remove tail if no food eaten
+                }
+                draw();
+            }
+
+            function startGame() {
+                gameStarted = true;
+                snake = [{ x: 10 * gridSize, y: 10 * gridSize }]; // Reset snake to center
+                dx = gridSize; // Reset direction
+                dy = 0;
+                score = 0;
+                scoreDisplay.text(`Score: ${score}`);
+                generateFood();
+                restartGameBtn.hide(); // Hide restart button
+                
+                if (gameInterval) clearInterval(gameInterval); // Clear any existing interval
+                gameInterval = setInterval(update, 100); // Game speed
+                draw(); // Initial draw
+            }
+
+            function endGame() {
+                gameStarted = false;
+                clearInterval(gameInterval); // Stop the game loop
+                restartGameBtn.show(); // Show restart button
+                ctx.fillStyle = 'rgba(0, 0, 0, 0.7)';
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+                ctx.fillStyle = 'white';
+                ctx.font = '30px Inter';
+                ctx.fillText('Game Over!', canvas.width / 2 - 80, canvas.height / 2);
+                ctx.font = '20px Inter';
+                ctx.fillText(`Final Score: ${score}`, canvas.width / 2 - 70, canvas.height / 2 + 40);
+            }
+
+            // Event Listeners
+            playGameIcon.on('click', function() {
+                constructionContent.addClass('hidden');
+                gameContainer.removeClass('hidden');
+                startGame();
+            });
+
+            backToConstructionBtn.on('click', function() {
+                gameContainer.addClass('hidden');
+                constructionContent.removeClass('hidden');
+                if (gameInterval) clearInterval(gameInterval); // Stop game if running
+                gameStarted = false; // Reset game state
+            });
+
+            restartGameBtn.on('click', function() {
+                startGame();
+            });
+
+            $(document).on('keydown', function(e) {
+                if (!gameStarted || changingDirection) return;
+
+                const keyPressed = e.key;
+                const goingUp = dy === -gridSize;
+                const goingDown = dy === gridSize;
+                const goingLeft = dx === -gridSize;
+                const goingRight = dx === gridSize;
+
+                if (['ArrowLeft', 'a'].includes(keyPressed) && !goingRight) {
+                    dx = -gridSize;
+                    dy = 0;
+                    changingDirection = true;
+                } else if (['ArrowUp', 'w'].includes(keyPressed) && !goingDown) {
+                    dx = 0;
+                    dy = -gridSize;
+                    changingDirection = true;
+                } else if (['ArrowRight', 'd'].includes(keyPressed) && !goingLeft) {
+                    dx = gridSize;
+                    dy = 0;
+                    changingDirection = true;
+                } else if (['ArrowDown', 's'].includes(keyPressed) && !goingUp) {
+                    dx = 0;
+                    dy = gridSize;
+                    changingDirection = true;
+                }
+            });
+
+            // Touch controls for mobile
+            $('#up-btn').on('click', function() {
+                if (!gameStarted || changingDirection || dy === gridSize) return;
+                dx = 0; dy = -gridSize; changingDirection = true;
+            });
+            $('#down-btn').on('click', function() {
+                if (!gameStarted || changingDirection || dy === -gridSize) return;
+                dx = 0; dy = gridSize; changingDirection = true;
+            });
+            $('#left-btn').on('click', function() {
+                if (!gameStarted || changingDirection || dx === gridSize) return;
+                dx = -gridSize; dy = 0; changingDirection = true;
+            });
+            $('#right-btn').on('click', function() {
+                if (!gameStarted || changingDirection || dx === -gridSize) return;
+                dx = gridSize; dy = 0; changingDirection = true;
+            });
+        });
+    </script>
+</body>
+</html>

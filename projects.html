@@ -161,6 +161,16 @@
                 height: 25px; /* Adjusted height for smaller screens */
                 stroke-width: 2.5; /* Adjusted thickness */
             }
+            .interactive-word {
+                color: #2c3e50; /* Initial dark color */
+                transition: color 0.3s ease; /* Smooth transition for color change */
+                cursor: pointer; /* Indicate it's interactive */
+                display: inline-block; /* Essential for individual letter hovers to work correctly */
+            }
+
+           .interactive-word:hover {
+                color: #ff5722; /* Orange color on hover */
+            }
         }
     </style>
 </head>
@@ -194,7 +204,9 @@
     <!-- Projects Section -->
     <section id="projects" class="py-5" style="padding-top: 100px !important;">
         <div class="container text-center">
-            <h2 class="text-center">Projects</h2>
+             <h2 class="text-center">
+                <span class="interactive-word">P</span><span class="interactive-word">R</span><span class="interactive-word">O</span><span class="interactive-word">J</span><span class="interactive-word">E</span><span class="interactive-word">C</span><span class="interactive-word">T</span><span class="interactive-word">S</span>
+            </h2>
             <!-- SVG for the scribble underline -->
             <svg class="scribble-underline" viewBox="0 0 150 20" preserveAspectRatio="none">
                 <path d="M5,10 C30,2 60,18 90,8 C120,-2 145,15 145,10" />

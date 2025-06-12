@@ -265,7 +265,25 @@
     </div>
 
     <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
-    <script>
+    
+    <!-- Firebase SDKs -->
+    <script type="module">
+        // Import Firebase modules
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { getAuth, signInAnonymously, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getFirestore, collection, addDoc, query, onSnapshot, getDocs, deleteDoc, doc, limit, orderBy } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+        // --- Firebase Initialization ---
+        const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
+        const firebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : { apiKey: "your-api-key", authDomain: "your-auth-domain", projectId: "your-project-id" };
+        
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+        let userId = null;
+        let leaderboardCol;
+
+        // --- jQuery Ready Function ---
         $(document).ready(function() {
             // --- DOM Elements ---
             const constructionContent = $('#construction-content');
@@ -283,23 +301,43 @@
             const nameInputContainer = $('#name-input-container');
             const playerNameInput = $('#player-name-input');
             const submitScoreBtn = $('#submit-score-btn');
-            const gameOverMessage = $('#game-over-message');
 
             // --- Game Variables ---
             const gridSize = 20;
             let snake, food, dx, dy, score, gameInterval, gameStarted, changingDirection;
-            const LEADERBOARD_KEY = 'snakeGameLeaderboard';
             const MAX_LEADERBOARD_ENTRIES = 5;
             let leaderboard = [];
 
-            // --- Leaderboard Functions ---
-            function loadLeaderboard() {
-                const storedLeaderboard = localStorage.getItem(LEADERBOARD_KEY);
-                leaderboard = storedLeaderboard ? JSON.parse(storedLeaderboard) : [];
-            }
+            // --- Authentication ---
+            onAuthStateChanged(auth, (user) => {
+                if (user) {
+                    userId = user.uid;
+                    // Path for public leaderboard data
+                    const leaderboardPath = `/artifacts/${appId}/public/data/leaderboard`;
+                    leaderboardCol = collection(db, leaderboardPath);
+                    listenForLeaderboardUpdates();
+                } else {
+                    signInAnonymously(auth).catch((error) => {
+                        console.error("Anonymous sign-in failed:", error);
+                    });
+                }
+            });
 
-            function saveLeaderboard() {
-                localStorage.setItem(LEADERBOARD_KEY, JSON.stringify(leaderboard));
+            // --- Leaderboard Functions (Firestore) ---
+            function listenForLeaderboardUpdates() {
+                if (!leaderboardCol) return;
+                // Note: Firestore requires an index for ordering. If you get an error in the console,
+                // it will provide a link to create the necessary index in your Firebase console.
+                const q = query(leaderboardCol, orderBy("score", "desc"), limit(MAX_LEADERBOARD_ENTRIES));
+                
+                onSnapshot(q, (snapshot) => {
+                    leaderboard = [];
+                    snapshot.forEach((doc) => {
+                        leaderboard.push({ id: doc.id, ...doc.data() });
+                    });
+                    renderLeaderboard();
+                    pruneLeaderboard(); // Clean up old scores
+                });
             }
 
             function renderLeaderboard() {
@@ -312,6 +350,19 @@
                     leaderboardList.append(`<li><span>${entry.name}</span><span>${entry.score}</span></li>`);
                 });
             }
+            
+            async function pruneLeaderboard() {
+                 const allScoresQuery = query(leaderboardCol, orderBy("score", "desc"));
+                 const snapshot = await getDocs(allScoresQuery);
+                 if (snapshot.size > MAX_LEADERBOARD_ENTRIES) {
+                     const promises = [];
+                     for(let i = MAX_LEADERBOARD_ENTRIES; i < snapshot.docs.length; i++) {
+                         promises.push(deleteDoc(doc(leaderboardCol, snapshot.docs[i].id)));
+                     }
+                     await Promise.all(promises);
+                 }
+            }
+
 
             function isHighScore(currentScore) {
                 if (currentScore === 0) return false;
@@ -319,22 +370,24 @@
                 return currentScore > lowestScore;
             }
 
-            function addScoreToLeaderboard(name, newScore) {
-                leaderboard.push({ name, score: newScore });
-                leaderboard.sort((a, b) => b.score - a.score);
-                leaderboard = leaderboard.slice(0, MAX_LEADERBOARD_ENTRIES);
-                saveLeaderboard();
-                renderLeaderboard();
+            async function addScoreToLeaderboard(name, newScore) {
+                if (!leaderboardCol) return;
+                try {
+                    await addDoc(leaderboardCol, {
+                        name: name,
+                        score: newScore,
+                        timestamp: new Date()
+                    });
+                } catch (e) {
+                    console.error("Error adding document: ", e);
+                }
             }
-
+            
             // --- Game Functions ---
             function initGameVars() {
                 snake = [{ x: 10 * gridSize, y: 10 * gridSize }];
-                dx = gridSize;
-                dy = 0;
-                score = 0;
-                gameStarted = false;
-                changingDirection = false;
+                dx = gridSize; dy = 0; score = 0;
+                gameStarted = false; changingDirection = false;
             }
 
             function generateFood() {
@@ -349,14 +402,10 @@
 
             function draw() {
                 ctx.clearRect(0, 0, canvas.width, canvas.height);
-                // Draw food
-                ctx.fillStyle = '#e53e3e';
-                ctx.strokeStyle = '#a00';
+                ctx.fillStyle = '#e53e3e'; ctx.strokeStyle = '#a00';
                 ctx.fillRect(food.x, food.y, gridSize, gridSize);
                 ctx.strokeRect(food.x, food.y, gridSize, gridSize);
-                // Draw snake
-                ctx.fillStyle = '#10b981';
-                ctx.strokeStyle = '#086';
+                ctx.fillStyle = '#10b981'; ctx.strokeStyle = '#086';
                 snake.forEach(segment => {
                     ctx.fillRect(segment.x, segment.y, gridSize, gridSize);
                     ctx.strokeRect(segment.x, segment.y, gridSize, gridSize);
@@ -367,15 +416,11 @@
                 if (!gameStarted) return;
                 changingDirection = false;
                 const head = { x: snake[0].x + dx, y: snake[0].y + dy };
-
-                // Wall collision or self-collision
                 if (head.x < 0 || head.x >= canvas.width || head.y < 0 || head.y >= canvas.height || snake.some(segment => segment.x === head.x && segment.y === head.y)) {
                     endGame();
                     return;
                 }
-
                 snake.unshift(head);
-
                 if (head.x === food.x && head.y === food.y) {
                     score += 10;
                     scoreDisplay.text(`Score: ${score}`);
@@ -387,22 +432,19 @@
             }
 
             function startGame() {
-                initGameVars();
-                gameStarted = true;
+                initGameVars(); gameStarted = true;
                 scoreDisplay.text(`Score: ${score}`);
                 generateFood();
                 restartGameBtn.hide();
                 nameInputContainer.hide();
-                gameOverMessage.hide();
                 $('#game-controls').show();
-
                 if (gameInterval) clearInterval(gameInterval);
                 gameInterval = setInterval(update, 100);
                 draw();
             }
 
             function showGameOverScreen() {
-                 ctx.fillStyle = 'rgba(0, 0, 0, 0.7)';
+                ctx.fillStyle = 'rgba(0, 0, 0, 0.7)';
                 ctx.fillRect(0, 0, canvas.width, canvas.height);
                 ctx.fillStyle = 'white';
                 ctx.font = '30px Inter';
@@ -410,16 +452,14 @@
                 ctx.fillText('Game Over!', canvas.width / 2, canvas.height / 2 - 20);
                 ctx.font = '20px Inter';
                 ctx.fillText(`Final Score: ${score}`, canvas.width / 2, canvas.height / 2 + 20);
-                
                 restartGameBtn.show();
             }
 
             function endGame() {
                 gameStarted = false;
                 clearInterval(gameInterval);
-                
                 if (isHighScore(score)) {
-                    $('#game-controls').hide(); // Hide arrow buttons etc.
+                    $('#game-controls').hide();
                     nameInputContainer.show();
                 } else {
                     showGameOverScreen();
@@ -427,38 +467,18 @@
             }
 
             // --- Event Listeners ---
-            playGameIcon.on('click', function() {
-                constructionContent.hide();
-                gameContainer.show();
-                startGame();
-            });
-            
-            viewLeaderboardBtn.on('click', function() {
-                renderLeaderboard();
-                constructionContent.hide();
-                leaderboardContainer.show();
-            });
-            
-            backFromLeaderboardBtn.on('click', function() {
-                leaderboardContainer.hide();
-                constructionContent.show();
-            });
-
-            backToConstructionBtn.on('click', function() {
-                gameContainer.hide();
-                constructionContent.show();
-                if (gameInterval) clearInterval(gameInterval);
-                gameStarted = false;
-            });
-
+            playGameIcon.on('click', () => { constructionContent.hide(); gameContainer.show(); startGame(); });
+            viewLeaderboardBtn.on('click', () => { renderLeaderboard(); constructionContent.hide(); leaderboardContainer.show(); });
+            backFromLeaderboardBtn.on('click', () => { leaderboardContainer.hide(); constructionContent.show(); });
+            backToConstructionBtn.on('click', () => { gameContainer.hide(); constructionContent.show(); if (gameInterval) clearInterval(gameInterval); gameStarted = false; });
             restartGameBtn.on('click', startGame);
 
-            submitScoreBtn.on('click', function() {
+            submitScoreBtn.on('click', async () => {
                 const playerName = playerNameInput.val().trim();
                 if (playerName) {
-                    addScoreToLeaderboard(playerName, score);
+                    await addScoreToLeaderboard(playerName, score);
                     nameInputContainer.hide();
-                    $('#game-controls').show(); // Show controls again
+                    $('#game-controls').show();
                     showGameOverScreen();
                     playerNameInput.val('');
                 } else {
@@ -467,25 +487,19 @@
             });
 
             // --- Keyboard & Touch Controls ---
-            $(document).on('keydown', function(e) {
+            $(document).on('keydown', e => {
                 if (!gameStarted || changingDirection) return;
-                const keyPressed = e.key;
-                const goingUp = dy === -gridSize, goingDown = dy === gridSize;
-                const goingLeft = dx === -gridSize, goingRight = dx === gridSize;
-
+                const keyPressed = e.key, goingUp = dy === -gridSize, goingDown = dy === gridSize, goingLeft = dx === -gridSize, goingRight = dx === gridSize;
                 if ((['ArrowLeft', 'a'].includes(keyPressed)) && !goingRight) { dx = -gridSize; dy = 0; changingDirection = true; } 
                 else if ((['ArrowUp', 'w'].includes(keyPressed)) && !goingDown) { dx = 0; dy = -gridSize; changingDirection = true; } 
                 else if ((['ArrowRight', 'd'].includes(keyPressed)) && !goingLeft) { dx = gridSize; dy = 0; changingDirection = true; } 
                 else if ((['ArrowDown', 's'].includes(keyPressed)) && !goingUp) { dx = 0; dy = gridSize; changingDirection = true; }
             });
-
             $('#up-btn').on('click', () => { if (!gameStarted || changingDirection || dy === gridSize) return; dx = 0; dy = -gridSize; changingDirection = true; });
             $('#down-btn').on('click', () => { if (!gameStarted || changingDirection || dy === -gridSize) return; dx = 0; dy = gridSize; changingDirection = true; });
             $('#left-btn').on('click', () => { if (!gameStarted || changingDirection || dx === gridSize) return; dx = -gridSize; dy = 0; changingDirection = true; });
             $('#right-btn').on('click', () => { if (!gameStarted || changingDirection || dx === -gridSize) return; dx = gridSize; dy = 0; changingDirection = true; });
 
-            // --- Initial Load ---
-            loadLeaderboard();
         });
     </script>
 </body>

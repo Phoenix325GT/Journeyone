@@ -270,7 +270,7 @@
     <script type="module">
         // Import Firebase modules
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-        import { getAuth, signInAnonymously, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getAuth, signInAnonymously, onAuthStateChanged, signInWithCustomToken } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
         import { getFirestore, collection, addDoc, query, onSnapshot, getDocs, deleteDoc, doc, limit, orderBy } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
         // --- Firebase Initialization ---
@@ -309,25 +309,44 @@
             let leaderboard = [];
 
             // --- Authentication ---
-            onAuthStateChanged(auth, (user) => {
+            onAuthStateChanged(auth, async (user) => {
                 if (user) {
                     userId = user.uid;
-                    // Path for public leaderboard data
                     const leaderboardPath = `/artifacts/${appId}/public/data/leaderboard`;
                     leaderboardCol = collection(db, leaderboardPath);
                     listenForLeaderboardUpdates();
                 } else {
-                    signInAnonymously(auth).catch((error) => {
-                        console.error("Anonymous sign-in failed:", error);
-                    });
+                    // Use custom token if available, otherwise sign in anonymously
+                    if (typeof __initial_auth_token !== 'undefined') {
+                        try {
+                            await signInWithCustomToken(auth, __initial_auth_token);
+                        } catch (error) {
+                            console.error("Custom token sign-in failed:", error);
+                            // Fallback to anonymous if custom token fails
+                            await signInAnonymously(auth);
+                        }
+                    } else {
+                        await signInAnonymously(auth);
+                    }
                 }
             });
 
             // --- Leaderboard Functions (Firestore) ---
             function listenForLeaderboardUpdates() {
                 if (!leaderboardCol) return;
-                // Note: Firestore requires an index for ordering. If you get an error in the console,
-                // it will provide a link to create the necessary index in your Firebase console.
+                
+                // --- IMPORTANT FIRESTORE NOTE ---
+                // This query uses 'orderBy' on the 'score' field. For this to work, you MUST create
+                // a composite index in your Firebase Firestore database.
+                //
+                // HOW TO CREATE THE INDEX:
+                // 1. Play the game and submit a score to trigger the query.
+                // 2. Open your browser's developer console (F12 or Ctrl+Shift+I).
+                // 3. Look for a Firestore error message that says an index is required.
+                // 4. This error message will contain a DIRECT LINK to create the needed index.
+                // 5. Click the link, review the index details, and click "Create Index".
+                //
+                // The leaderboard will show "no scores yet" until this index is created and active.
                 const q = query(leaderboardCol, orderBy("score", "desc"), limit(MAX_LEADERBOARD_ENTRIES));
                 
                 onSnapshot(q, (snapshot) => {
@@ -337,6 +356,9 @@
                     });
                     renderLeaderboard();
                     pruneLeaderboard(); // Clean up old scores
+                }, (error) => {
+                    console.error("Error listening to leaderboard:", error);
+                    leaderboardList.empty().append('<li>Could not load scores.</li>');
                 });
             }
 
@@ -353,20 +375,25 @@
             
             async function pruneLeaderboard() {
                  const allScoresQuery = query(leaderboardCol, orderBy("score", "desc"));
-                 const snapshot = await getDocs(allScoresQuery);
-                 if (snapshot.size > MAX_LEADERBOARD_ENTRIES) {
-                     const promises = [];
-                     for(let i = MAX_LEADERBOARD_ENTRIES; i < snapshot.docs.length; i++) {
-                         promises.push(deleteDoc(doc(leaderboardCol, snapshot.docs[i].id)));
+                 try {
+                     const snapshot = await getDocs(allScoresQuery);
+                     if (snapshot.size > MAX_LEADERBOARD_ENTRIES) {
+                         const promises = [];
+                         for(let i = MAX_LEADERBOARD_ENTRIES; i < snapshot.docs.length; i++) {
+                             promises.push(deleteDoc(doc(leaderboardCol, snapshot.docs[i].id)));
+                         }
+                         await Promise.all(promises);
                      }
-                     await Promise.all(promises);
+                 } catch(error) {
+                    // This can fail if the index is not created yet, which is okay.
+                    // The main listener will show the error to the user in the console.
                  }
             }
 
 
             function isHighScore(currentScore) {
                 if (currentScore === 0) return false;
-                const lowestScore = leaderboard.length < MAX_LEADERBOARD_ENTRIES ? 0 : leaderboard[MAX_LEADERBOARD_ENTRIES - 1].score;
+                const lowestScore = leaderboard.length < MAX_LEADERBOARD_ENTRIES ? 0 : leaderboard[leaderboard.length - 1].score;
                 return currentScore > lowestScore;
             }
 
